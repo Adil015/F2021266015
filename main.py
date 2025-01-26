@@ -1,31 +1,39 @@
-import pickle
 import streamlit as st
+import pickle
 import numpy as np
-from sklearn.preprocessing import StandardScaler  # Reapply the scaler here
 
-# Load the trained model
-with open('svm_model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
+# Load the trained SVM model
+with open("svm_model.pkl", "rb") as model_file:
+    svm_model = pickle.load(model_file)
 
-# Recreate the scaler used during training
-scaler = StandardScaler()
+# Function to make prediction
+def predict_purchase(gender, age, salary):
+    # Encode gender: Male = 1, Female = 0
+    gender_encoded = 1 if gender == 'Male' else 0
 
-# Define a function to make predictions
-def make_prediction(features):
-    # Scale the input features before passing them to the model (re-apply the same scaler)
-    features_scaled = scaler.fit_transform([features])  # Scale using the same logic as training
-    return model.predict(features_scaled)
+    # Create the input array for prediction
+    input_data = np.array([[gender_encoded, age, salary]])
+    
+    # Predict using the SVM model
+    prediction = svm_model.predict(input_data)
+    
+    # Convert prediction to label
+    if prediction == 1:
+        return "Yes"
+    else:
+        return "No"
 
-# Streamlit app layout
-st.title("SVM Model Prediction App")
+# Streamlit Interface
+st.title("Purchase Prediction App")
+st.write("Enter the following details to predict if a person will make a purchase:")
 
-# User input for features
-feature1 = st.number_input("Enter Feature 1", min_value=0.0, max_value=100.0, value=0.0)
-feature2 = st.number_input("Enter Feature 2", min_value=0.0, max_value=100.0, value=0.0)
+# Input fields
+gender = st.selectbox("Select Gender", ["Male", "Female"])
+age = st.number_input("Enter Age", min_value=18, max_value=100, step=1)
+salary = st.number_input("Enter Salary", min_value=0, step=1000)
 
-# You can add more input fields for other features if needed
-
-# When the user presses the button, make a prediction
+# Predict button
 if st.button("Predict"):
-    prediction = make_prediction([feature1, feature2])  # Adjust based on the number of features
-    st.write(f"The predicted class is: {prediction[0]}")
+    result = predict_purchase(gender, age, salary)
+    st.write(f"Prediction: {result}")
+
