@@ -29,7 +29,7 @@ st.write("Enter the following details to predict if a person will make a purchas
 
 # Input fields
 gender = st.selectbox("Select Gender", ["Male", "Female"])
-age = st.number_input("Enter Age", min_value=18, max_value=100, step=1)
+age = st.number_input("Enter Age", min_value=0, max_value=100, step=1)
 salary = st.number_input("Enter Salary", min_value=0, step=1000)
 
 # Predict button
